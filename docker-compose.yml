@@ -1,16 +1,16 @@
 version: "3.1"
 
 services:
-  app:
+  php:
     build:
       context: .
       dockerfile: ./docker/php/Dockerfile
       args:
         PROJECT_NAME: $PROJECT_NAME
     volumes:
-      - ./src:/src
+      - ./app:/app
     environment:
-       PROJECT_NAME: test
+      PROJECT_NAME: test
 
   nginx:
     image: nginx:latest
@@ -22,23 +22,22 @@ services:
 
   mysql:
     image: mysql:8.0
-    volumes:
-      - ./db:/var/lib/mysql
-      - ./mysql_conf:/etc/mysql/conf.d
-    env_file:
-      .env
     ports:
-      - 13306:3306
+      - "13306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+    volumes:
+      - ./mysql_conf:/etc/mysql/conf.d
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    environment:
-      - PMA_ARBITRARY=1
-      - PMA_HOST=db
-      - PMA_USER=root
-      - PMA_PASSWORD=root
     ports:
-      - 4040:80
+      - "4040:80"
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: lolcalhost:3306
+      PMA_USER: root
+      PMA_PASSWORD: root
     volumes:
       - ./phpmyadmin-session:/sessions
 
